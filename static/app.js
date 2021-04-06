@@ -1,75 +1,56 @@
-//Read in json file and console log to test it 
-d3.json("../data/samples.json").then((importedData) => {
-    console.log(importedData);
-    var data = importedData;
+//make variable for all the select tags in html
+//and use d3.select to set them up
 
+// select the user input field
+var idSelect = d3.select("#selDataset");
 
-});
+// select the demographic info div's ul list group
+var demographicsTable = d3.select("#sample-metadata");
 
-//first variable is drawChart with the function...
-var drawChart = function(x_data, y_data, hoverText, metadata) {
+// select the bar chart div
+var barChart = d3.select("#bar");
 
-    //using d3 to select sample metadata and grab key value pairs
-    var metadata_panel = d3.select("#sample-metadata");
-    metadata_panel.html("");
-    Object.entries(metadata).forEach(([key, value]) => {
-        metadata_panel.append("p").text(`${key}: ${value}`);
-    });
-    
-    //establishing first trace
-    var trace = {
-        x: x_data,
-        y: y_data,
-        text: hoverText,
-        type: 'bar',
-        //orientation 'h'= horizontal
-        orientation: 'h'
-    };
-    
-    //making an array of trace so it can be plotted
-    var data = [trace];
-  
-    //plot with plotly
-    Plotly.newPlot('bar', data);
-  
-    //establishing second trace as a scatter this time
-    var trace2 = {
-        x: x_data,
-        y: y_data,
-        text: hoverText,
-        mode: 'markers',
-        marker: {
-            size: y_data,
-            color: x_data
-        }
-    };
-    
-    
-    //making an array of trace so it can be plotted
-    var data2 = [trace2];
-  
-    //plot with plotly...this time as "bubble"
-    Plotly.newPlot('bubble', data2);
-  
-  
-  };
+// select the bubble chart div
+var bubbleChart = d3.select("bubble");
 
-  //populating the dropdown menu so it will return the values of what user chooses
-  var populateDropdown = function(names) {
+// select the gauge chart div
+var gaugeChart = d3.select("gauge");
 
-    //selDataset is the id we are looking for
-    var selectTag = d3.select("#selDataset");
-    //various options in dropdown
-    var options = selectTag.selectAll('option').data(names);
-  
-    //actually populates the dropdown with all the values in the dataset
-    options.enter()
-        .append('option')
-        .attr('value', function(d) {
-            return d;
-        })
-        .text(function(d) {
-            return d;
-        });
-  
-  };
+// create a function to initially populate dropdown menu with IDs and draw charts by default 
+function init() {
+
+    // reset any previous data
+    resetData();
+
+    // read in samples from JSON file
+    d3.json("../data/samples.json").then((data => {
+
+        //  use a forEach to loop over each name in the array data.names to populate dropdowns with IDs
+        data.names.forEach((name => {
+            //this code will make dropdown contain all ids as there own instead an array of all of them
+            var option = idSelect.append("option");
+            option.text(name);
+        })); 
+
+        // get the first ID from the list for initial charts as a default
+        var initId = idSelect.property("value")
+
+        // plot charts with initial ID
+        plotCharts(initId);
+
+    })); 
+
+} 
+
+// create a function to reset divs to prepare for new data
+//when this called, the data will be reset 
+function resetData() {
+
+    demographicsTable.html("");
+    barChart.html("");
+    bubbleChart.html("");
+    gaugeChart.html("");
+
+};
+
+// create a function to read JSON and plot charts
