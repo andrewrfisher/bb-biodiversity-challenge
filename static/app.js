@@ -53,4 +53,67 @@ function resetData() {
 
 };
 
-// create a function to read JSON and plot charts
+// create a function to read JSON and plot all of the charts (will be a very large function)
+function plotCharts(id) {
+
+    // read in the JSON data
+    d3.json("../data/samples.json").then((data => {
+
+        //DEMOGRAPHICS TABLE --plotting 
+
+        // filter the metadata for the ID chosen
+        var individualMetadata = data.metadata.filter(participant => participant.id == id)[0];
+
+        // **get the wash frequency for gauge chart later**
+        var wfreq = individualMetadata.wfreq;
+
+        // Iterate through each key and value in the metadata - just like last hw activity
+        Object.entries(individualMetadata).forEach(([key, value]) => {
+
+            var newList = demographicsTable.append("ul");
+            newList.attr("class", "list-group list-group-flush");
+
+            // append a li item to the unordered list tag
+            var listItem = newList.append("li");
+
+            // found out how rto change the class attributes of the list item for styling
+            listItem.attr("class", "list-group-item p-1 demo-text bg-transparent");
+
+            // add the key value pair from the metadata to the demographics list
+            listItem.text(`${key}: ${value}`);
+
+        });
+
+        // RETRIEVING DATA FOR PLOTTING CHARTS
+
+
+        // filter the samples for the ID chosen
+        var individualSample = data.samples.filter(sample => sample.id == id)[0];
+
+        // create empty arrays to store sample data
+        var otuIds = [];
+        var otuLabels = [];
+        var sampleValues = [];
+
+        // Iterate through each key and value in the sample to retrieve data for plotting
+        //using switches to iterate instead of for loop
+        Object.entries(individualSample).forEach(([key, value]) => {
+
+            switch (key) {
+                case "otu_ids":
+                    otuIds.push(value);
+                    break;
+                case "sample_values":
+                    sampleValues.push(value);
+                    break;
+                case "otu_labels":
+                    otuLabels.push(value);
+                    break;
+                    // case
+                default:
+                    break;
+            } // close switch statement
+
+        }); // close forEach
+
+    
