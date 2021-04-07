@@ -60,11 +60,13 @@ function plotCharts(id) {
     d3.json("../data/samples.json").then((data => {
 
         //DEMOGRAPHICS TABLE --plotting 
+        // ----------------------------------
 
         // filter the metadata for the ID chosen
         var individualMetadata = data.metadata.filter(participant => participant.id == id)[0];
 
         // **get the wash frequency for gauge chart later**
+        //essentially grabbing wfreq value from json
         var wfreq = individualMetadata.wfreq;
 
         // Iterate through each key and value in the metadata - just like last hw activity
@@ -76,7 +78,7 @@ function plotCharts(id) {
             // append a li item to the unordered list tag
             var listItem = newList.append("li");
 
-            // found out how rto change the class attributes of the list item for styling
+            // found out how to change the class attributes of the list item for styling
             listItem.attr("class", "list-group-item p-1 demo-text bg-transparent");
 
             // add the key value pair from the metadata to the demographics list
@@ -85,6 +87,7 @@ function plotCharts(id) {
         });
 
         // RETRIEVING DATA FOR PLOTTING CHARTS
+        // ----------------------------------
 
 
         // filter the samples for the ID chosen
@@ -112,8 +115,64 @@ function plotCharts(id) {
                     // case
                 default:
                     break;
-            } // close switch statement
+            } 
 
-        }); // close forEach
+        });
+
+    // slice and reverse the arrays to get the top 10 values, labels and IDs
+    //slice can give us 10 items 
+    var topOtuIds = otuIds[0].slice(0, 10).reverse();
+    var topOtuLabels = otuLabels[0].slice(0, 10).reverse();
+    var topSampleValues = sampleValues[0].slice(0, 10).reverse();
+
+    // use the map function to store the IDs with "OTU" for labelling y-axis
+    var topOtuIdsFormatted = topOtuIds.map(otuID => "OTU " + otuID);
+
+ 
+    // BAR CHART
+    // ----------------------------------
+
+    // create a trace
+    var traceBar = {
+        x: topSampleValues,
+        y: topOtuIdsFormatted,
+        text: topOtuLabels,
+        type: 'bar',
+        orientation: 'h',
+        marker: {
+            color: 'rgb(29,145,192)'
+        }
+    };
+
+    // create the data array for plotting
+    var dataBar = [traceBar];
+
+    // define the plot layout
+    var layoutBar = {
+        height: 500,
+        width: 600,
+        font: {
+            family: 'Arial'
+        },
+        hoverlabel: {
+            font: {
+                family: 'Arial'
+            }
+        },
+        title: {
+            text: `<b>Top OTUs for Test Subject ${id}</b>`,
+            font: {
+                size: 18,
+                color: 'rgb(34,94,168)'
+            }
+        },
+        xaxis: {
+            title: "<b>Sample values<b>",
+            color: 'rgb(34,94,168)'
+        },
+        yaxis: {
+            tickfont: { size: 14 }
+        }
+    };
 
     
