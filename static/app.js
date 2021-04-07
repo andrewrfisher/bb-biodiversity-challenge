@@ -175,4 +175,50 @@ function plotCharts(id) {
         }
     };
 
-    
+        // plot the bar chart to the "bar" div
+        Plotly.newPlot("bar", dataBar, layoutBar);
+
+
+        // PLOT BUBBLE CHART
+        // ----------------------------------
+
+        // create trace
+        var traceBubble = {
+            x: otuIds[0],
+            y: sampleValues[0],
+            text: otuLabels[0],
+            mode: 'markers',
+            marker: {
+                size: sampleValues[0],
+                color: otuIds[0],
+                colorscale: 'YlGnBu'
+            }
+        };
+
+        // create the data array for the plot
+        var dataBubble = [traceBubble];
+
+        // define the plot layout
+        var layoutBubble = {
+            font: {
+                family: 'Arial'
+            },
+            hoverlabel: {
+                font: {
+                    family: 'Arial'
+                }
+            },
+            xaxis: {
+                title: "<b>OTU Id</b>",
+                color: 'rgb(34,94,168)'
+            },
+            yaxis: {
+                title: "<b>Sample Values</b>",
+                color: 'rgb(34,94,168)'
+            },
+            showlegend: false,
+        };
+
+        // plot the bubble chat to the appropriate div
+        Plotly.newPlot('bubble', dataBubble, layoutBubble);
+
